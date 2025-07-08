@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗算トレーニング💪</title>
+    <title>暗算トレーニング</title>
     <style>
         /* Google Fontsからシンプルなフォントを読み込み */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -236,6 +236,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <script>
+        // ★★★ 変更点: ページの全ての読み込み完了を待ってから実行するよう修正 ★★★
+        window.addEventListener('load', function() {
+            // 短い遅延を設けて、WordPressの他のスクリプトの実行完了を待つ
+            setTimeout(initializeDiceDojo, 100);
+        });
+
         function initializeDiceDojo() {
             try {
                 const appContainer = document.getElementById('dice-dojo-app');
@@ -247,7 +253,6 @@
                 const canvas = document.getElementById('dice-canvas');
                 const ctx = canvas.getContext('2d');
 
-                // Tone.jsが読み込まれていない場合は、処理を中断
                 if (typeof Tone === 'undefined') {
                     console.error("Tone.jsが読み込まれていません。");
                     return;
@@ -591,9 +596,6 @@
                 console.error("サイコロ道場アプリの実行中にエラーが発生しました:", e);
             }
         }
-
-        // ★★★ 変更点: window.onload を使用して、ページ全体の読み込み完了後に初期化 ★★★
-        window.onload = initializeDiceDojo;
     </script>
 </body>
 </html>
