@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サイコロ道場</title>
+    <title>暗算トレーニング</title>
     <style>
         /* Google Fontsからシンプルなフォントを読み込み */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -19,14 +19,16 @@
 
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            background-color: var(--bg-color);
+            /* ★★★ 変更点: 背景を透明にして、埋め込み先の背景に馴染むようにする ★★★ */
+            background-color: transparent;
             color: var(--primary-color);
             margin: 0;
             padding: 0;
         }
 
         #dice-dojo-app {
-            margin: 40px auto;
+            /* ★★★ 変更点: 埋め込み時の余白を調整 ★★★ */
+            margin: 20px auto;
             width: 100%;
             max-width: 480px;
             background-color: white;
@@ -196,6 +198,7 @@
     <div id="dice-dojo-app">
         <!-- 画面1: メニュー画面 -->
         <div id="menu-screen" class="screen">
+            <!-- ★★★ 変更点: タイトルを更新 ★★★ -->
             <h1>暗算トレーニング💪</h1>
             <button class="level-button" data-level="5kyu">暗算５級 (たし算)</button>
             <button class="level-button" data-level="4kyu1">暗算４級その１ (かけ算)</button>
@@ -236,9 +239,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <script>
-        // ★★★ 変更点: ページの全ての読み込み完了を待ってから実行するよう修正 ★★★
         window.addEventListener('load', function() {
-            // 短い遅延を設けて、他のスクリプトの実行完了を待つ
             setTimeout(initializeDiceDojo, 100);
         });
 
@@ -345,7 +346,6 @@
                     updateAnswerDisplay();
                     showScreen('game-screen');
                     
-                    // ★★★ 変更点: requestAnimationFrameで描画タイミングを最適化 ★★★
                     requestAnimationFrame(() => {
                         resizeCanvas(); 
                         drawInitialCanvas();
