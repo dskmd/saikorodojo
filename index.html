@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗算トレーニング</title>
+    <title>サイコロ道場</title>
     <style>
         /* Google Fontsからシンプルなフォントを読み込み */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -196,7 +196,7 @@
     <div id="dice-dojo-app">
         <!-- 画面1: メニュー画面 -->
         <div id="menu-screen" class="screen">
-            <h1>サイコロ道場</h1>
+            <h1>暗算トレーニング💪</h1>
             <button class="level-button" data-level="5kyu">暗算５級 (たし算)</button>
             <button class="level-button" data-level="4kyu1">暗算４級その１ (かけ算)</button>
             <button class="level-button" data-level="4kyu2">暗算４級その２ (かけ算)</button>
@@ -238,7 +238,7 @@
     <script>
         // ★★★ 変更点: ページの全ての読み込み完了を待ってから実行するよう修正 ★★★
         window.addEventListener('load', function() {
-            // 短い遅延を設けて、WordPressの他のスクリプトの実行完了を待つ
+            // 短い遅延を設けて、他のスクリプトの実行完了を待つ
             setTimeout(initializeDiceDojo, 100);
         });
 
@@ -251,7 +251,16 @@
                 const resultScreen = document.getElementById('result-screen');
                 const logoContainer = document.getElementById('logo-container');
                 const canvas = document.getElementById('dice-canvas');
+                
+                if (!canvas || typeof canvas.getContext !== 'function') {
+                    console.error("Canvas要素が見つからないか、サポートされていません。");
+                    return;
+                }
                 const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error("2Dコンテキストの取得に失敗しました。");
+                    return;
+                }
 
                 if (typeof Tone === 'undefined') {
                     console.error("Tone.jsが読み込まれていません。");
@@ -335,7 +344,13 @@
                     updateTimerDisplay();
                     updateAnswerDisplay();
                     showScreen('game-screen');
-                    drawInitialCanvas();
+                    
+                    // ★★★ 変更点: requestAnimationFrameで描画タイミングを最適化 ★★★
+                    requestAnimationFrame(() => {
+                        resizeCanvas(); 
+                        drawInitialCanvas();
+                    });
+
                     if (timerId) clearInterval(timerId);
                     timerId = setInterval(updateTimer, 1000);
                 };
@@ -463,9 +478,6 @@
                     const parentWidth = canvas.parentElement.clientWidth;
                     canvas.width = parentWidth;
                     canvas.height = 200;
-                    if (gameState === 'waiting_for_roll') {
-                       drawInitialCanvas();
-                    }
                 };
                 const drawInitialCanvas = () => {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
