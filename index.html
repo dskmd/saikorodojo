@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>暗算トレーニング</title>
     <style>
-        /* Google Fontsからシンプルなフォントを読み込み */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
 
         :root {
@@ -19,7 +18,6 @@
 
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            /* ★★★ 変更点: 背景を透明にして、埋め込み先の背景に馴染むようにする ★★★ */
             background-color: transparent;
             color: var(--primary-color);
             margin: 0;
@@ -27,7 +25,6 @@
         }
 
         #dice-dojo-app {
-            /* ★★★ 変更点: 埋め込み時の余白を調整 ★★★ */
             margin: 20px auto;
             width: 100%;
             max-width: 480px;
@@ -45,7 +42,7 @@
             box-sizing: border-box;
         }
 
-        h1, h2 {
+        h1, h2, h3 {
             margin-top: 0;
         }
 
@@ -184,6 +181,26 @@
             margin: 10px 0;
         }
 
+        /* ★★★ 復習エリアのスタイル ★★★ */
+        #review-area {
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            text-align: left;
+        }
+        #review-area h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .wrong-question {
+            background-color: #fff9f9;
+            border: 1px solid #ffe0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
         #logo-container {
             padding: 0 24px 24px 24px;
         }
@@ -196,9 +213,7 @@
 <body>
 
     <div id="dice-dojo-app">
-        <!-- 画面1: メニュー画面 -->
         <div id="menu-screen" class="screen">
-            <!-- ★★★ 変更点: タイトルを更新 ★★★ -->
             <h1>暗算トレーニング💪</h1>
             <button class="level-button" data-level="5kyu">暗算５級 (たし算)</button>
             <button class="level-button" data-level="4kyu1">暗算４級その１ (かけ算)</button>
@@ -207,7 +222,6 @@
             <button class="level-button" data-level="3kyu2">暗算３級その２ (かけ算)</button>
         </div>
 
-        <!-- 画面2: ゲーム画面 -->
         <div id="game-screen" class="screen" style="display:none;">
             <div id="game-header">
                 <span id="timer">5:00</span>
@@ -223,15 +237,18 @@
             </div>
         </div>
 
-        <!-- 画面3: 結果画面 -->
         <div id="result-screen" class="screen" style="display:none;">
             <h2>結果</h2>
             <div id="result-details"></div>
+            <!-- ★★★ 復習エリアを追加 ★★★ -->
+            <div id="review-area" style="display:none;">
+                <h3>間違えた問題をやり直そう💪</h3>
+                <div id="wrong-answers-list"></div>
+            </div>
             <button class="level-button" id="restart-button">もう一度挑戦</button>
             <button class="level-button" id="back-to-menu-button">メニューに戻る</button>
         </div>
 
-        <!-- ロゴ表示エリア -->
         <div id="logo-container">
             <img id="logo-img" src="http://howhowvideo.jp/wp-content/uploads/2025/07/saikorologo-1.png" alt="サイコロ道場 ロゴ">
         </div>
@@ -253,20 +270,11 @@
                 const logoContainer = document.getElementById('logo-container');
                 const canvas = document.getElementById('dice-canvas');
                 
-                if (!canvas || typeof canvas.getContext !== 'function') {
-                    console.error("Canvas要素が見つからないか、サポートされていません。");
-                    return;
-                }
+                if (!canvas || typeof canvas.getContext !== 'function') { return; }
                 const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    console.error("2Dコンテキストの取得に失敗しました。");
-                    return;
-                }
+                if (!ctx) { return; }
 
-                if (typeof Tone === 'undefined') {
-                    console.error("Tone.jsが読み込まれていません。");
-                    return;
-                }
+                if (typeof Tone === 'undefined') { return; }
 
                 const LEVELS = {
                     '5kyu':  { name: '暗算５級 (たし算)', type: 'add', dices: [
@@ -299,6 +307,9 @@
                 let gameState = 'waiting_for_roll';
                 let animatedDice = [];
                 let animationFrameId = null;
+                // ★★★ 間違えた問題を保存する配列を追加 ★★★
+                let wrongAnswers = [];
+                let currentQuestionDice = [];
 
                 let soundsReady = false;
                 const hitSound = new Tone.PolySynth(Tone.MembraneSynth, {
@@ -312,6 +323,12 @@
                 const luckySound = new Tone.Synth({
                     oscillator: { type: 'sine' },
                     envelope: { attack: 0.01, decay: 0.5, sustain: 0.2, release: 0.5 }
+                }).toDestination();
+                // ★★★ 不正解の効果音を追加 ★★★
+                const errorSound = new Tone.AMSynth({
+                    harmonicity: 1.5,
+                    envelope: { attack: 0.01, decay: 0.2, release: 0.2},
+                    modulationEnvelope: { attack: 0.1, decay: 0.3, release: 0.3}
                 }).toDestination();
                 
                 const initAudio = () => {
@@ -338,6 +355,8 @@
                     currentLevelKey = levelKey;
                     score = 0;
                     questionCount = 0;
+                    // ★★★ 間違えた問題の記録をリセット ★★★
+                    wrongAnswers = [];
                     timeLeft = GAME_DURATION;
                     userAnswer = '';
                     gameState = 'waiting_for_roll';
@@ -390,6 +409,9 @@
                         }
                         return { ...diceInfo, value };
                     });
+                    
+                    // ★★★ 現在の問題を保存 ★★★
+                    currentQuestionDice = finalResults.filter(d => d.value !== '∞');
                     currentAnswer = total;
                     questionCount++;
                     updateScoreDisplay();
@@ -447,18 +469,37 @@
 
                 const checkAnswer = () => {
                     if (gameState !== 'waiting_for_answer') return;
+                    const messageArea = document.getElementById('message-area');
+
                     if (parseInt(userAnswer, 10) === currentAnswer) {
                         score++;
                         if (soundsReady) correctSound.triggerAttackRelease("G5", "0.2");
+                        messageArea.style.color = 'var(--correct-color)';
+                        messageArea.textContent = 'せいかい！';
+                    } else {
+                        // ★★★ 不正解の処理 ★★★
+                        if (soundsReady) errorSound.triggerAttackRelease("C3", "0.5");
+                        messageArea.style.color = 'var(--error-color)';
+                        messageArea.textContent = 'ざんねん... 😞';
+                        wrongAnswers.push({
+                            dices: currentQuestionDice,
+                            correct: currentAnswer,
+                            type: LEVELS[currentLevelKey].type
+                        });
                     }
+                    
                     userAnswer = '';
                     updateAnswerDisplay();
                     updateScoreDisplay();
-                    if (timeLeft > 0) {
-                        gameState = 'waiting_for_roll';
-                        drawInitialCanvas();
-                    }
                     document.getElementById('submit-button').disabled = true;
+
+                    setTimeout(() => {
+                        if (timeLeft > 0) {
+                            gameState = 'waiting_for_roll';
+                            drawInitialCanvas();
+                            messageArea.textContent = '';
+                        }
+                    }, 1500);
                 };
 
                 const updateTimerDisplay = () => {
@@ -552,12 +593,33 @@
                     ctx.textBaseline = 'middle';
                     ctx.fillText(value, x, y);
                 };
+                
+                // ★★★ 結果表示の関数を更新 ★★★
                 const showResult = () => {
                     showScreen('result-screen');
                     const levelName = LEVELS[currentLevelKey].name;
                     const details = document.getElementById('result-details');
                     details.innerHTML = `<p>挑戦した級: <strong>${levelName}</strong></p><p>解けた問題数: <strong>${questionCount}問</strong></p><p>正解数: <strong>${score}問</strong></p>`;
+
+                    const reviewArea = document.getElementById('review-area');
+                    const wrongAnswersList = document.getElementById('wrong-answers-list');
+                    wrongAnswersList.innerHTML = ''; // 前回の結果をクリア
+
+                    if (wrongAnswers.length > 0) {
+                        reviewArea.style.display = 'block';
+                        wrongAnswers.forEach(item => {
+                            const questionDiv = document.createElement('div');
+                            questionDiv.className = 'wrong-question';
+                            const operator = item.type === 'multiply' ? ' × ' : ' + ';
+                            const questionText = item.dices.map(d => d.value).join(operator);
+                            questionDiv.textContent = `${questionText} = ${item.correct}`;
+                            wrongAnswersList.appendChild(questionDiv);
+                        });
+                    } else {
+                        reviewArea.style.display = 'none';
+                    }
                 };
+                
                 const createKeypad = () => {
                     const keypad = document.getElementById('keypad');
                     keypad.innerHTML = '';
