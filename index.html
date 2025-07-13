@@ -25,7 +25,8 @@
         }
 
         #dice-dojo-app {
-            margin: 20px auto;
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin: 15px auto;
             width: 100%;
             max-width: 480px;
             background-color: white;
@@ -38,7 +39,8 @@
         }
 
         .screen {
-            padding: 24px;
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            padding: 20px;
             box-sizing: border-box;
         }
 
@@ -48,14 +50,15 @@
 
         #menu-screen h1 {
             font-size: 2em;
-            margin-bottom: 24px;
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-bottom: 20px;
         }
 
         .level-button {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 12px;
+            padding: 12px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-bottom: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.1em;
             font-weight: 700;
             color: var(--accent-color);
@@ -75,7 +78,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.2em;
             font-weight: 700;
         }
@@ -98,7 +101,7 @@
 
         #dice-canvas {
             width: 100%;
-            height: 200px;
+            height: 180px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             background-color: #f9f9f9;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -114,7 +117,7 @@
         }
 
         #input-area {
-            margin-top: 20px;
+            margin-top: 15px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
         }
 
         #answer-display {
@@ -136,7 +139,7 @@
         }
 
         .keypad-button {
-            padding: 15px;
+            padding: 12px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.5em;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -169,12 +172,12 @@
 
         #result-screen h2 {
             font-size: 1.8em;
-            margin-bottom: 24px;
+            margin-bottom: 20px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
         }
         #result-details {
             font-size: 1.2em;
             text-align: left;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 20px auto; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             width: fit-content;
         }
         #result-details p {
@@ -182,7 +185,7 @@
         }
 
         #review-area {
-            margin-top: 30px;
+            margin-top: 20px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             border-top: 1px solid var(--border-color);
             padding-top: 20px;
             text-align: left;
@@ -201,7 +204,7 @@
         }
 
         #logo-container {
-            padding: 0 24px 24px 24px;
+            padding: 0 24px 20px 24px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
         }
         #logo-img {
             max-width: 150px;
@@ -321,10 +324,10 @@
                     oscillator: { type: 'sine' },
                     envelope: { attack: 0.01, decay: 0.5, sustain: 0.2, release: 0.5 }
                 }).toDestination();
-                const errorSound = new Tone.AMSynth({
-                    harmonicity: 1.5,
-                    envelope: { attack: 0.01, decay: 0.2, release: 0.2},
-                    modulationEnvelope: { attack: 0.1, decay: 0.3, release: 0.3}
+                // ★★★ 変更点: 不正解の効果音をかわいらしい音に変更 ★★★
+                const errorSound = new Tone.Synth({
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 }
                 }).toDestination();
                 
                 const initAudio = () => {
@@ -471,7 +474,12 @@
                         messageArea.style.color = 'var(--correct-color)';
                         messageArea.textContent = 'せいかい！';
                     } else {
-                        if (soundsReady) errorSound.triggerAttackRelease("C3", "0.5");
+                        // ★★★ 変更点: 不正解の効果音をトリガー ★★★
+                        if (soundsReady) {
+                            const now = Tone.now();
+                            errorSound.triggerAttackRelease("G3", "8n", now);
+                            errorSound.triggerAttackRelease("C3", "8n", now + 0.1);
+                        }
                         messageArea.style.color = 'var(--error-color)';
                         messageArea.textContent = 'ざんねん... 😞';
                         wrongAnswers.push({
@@ -511,7 +519,7 @@
                     if (!canvas.parentElement) return;
                     const parentWidth = canvas.parentElement.clientWidth;
                     canvas.width = parentWidth;
-                    canvas.height = 200;
+                    canvas.height = 180;
                 };
                 const drawInitialCanvas = () => {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
