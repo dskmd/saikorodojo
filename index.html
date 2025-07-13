@@ -181,7 +181,6 @@
             margin: 10px 0;
         }
 
-        /* ★★★ 復習エリアのスタイル ★★★ */
         #review-area {
             margin-top: 30px;
             border-top: 1px solid var(--border-color);
@@ -240,7 +239,6 @@
         <div id="result-screen" class="screen" style="display:none;">
             <h2>結果</h2>
             <div id="result-details"></div>
-            <!-- ★★★ 復習エリアを追加 ★★★ -->
             <div id="review-area" style="display:none;">
                 <h3>間違えた問題をやり直そう💪</h3>
                 <div id="wrong-answers-list"></div>
@@ -307,7 +305,6 @@
                 let gameState = 'waiting_for_roll';
                 let animatedDice = [];
                 let animationFrameId = null;
-                // ★★★ 間違えた問題を保存する配列を追加 ★★★
                 let wrongAnswers = [];
                 let currentQuestionDice = [];
 
@@ -324,7 +321,6 @@
                     oscillator: { type: 'sine' },
                     envelope: { attack: 0.01, decay: 0.5, sustain: 0.2, release: 0.5 }
                 }).toDestination();
-                // ★★★ 不正解の効果音を追加 ★★★
                 const errorSound = new Tone.AMSynth({
                     harmonicity: 1.5,
                     envelope: { attack: 0.01, decay: 0.2, release: 0.2},
@@ -355,7 +351,6 @@
                     currentLevelKey = levelKey;
                     score = 0;
                     questionCount = 0;
-                    // ★★★ 間違えた問題の記録をリセット ★★★
                     wrongAnswers = [];
                     timeLeft = GAME_DURATION;
                     userAnswer = '';
@@ -410,7 +405,6 @@
                         return { ...diceInfo, value };
                     });
                     
-                    // ★★★ 現在の問題を保存 ★★★
                     currentQuestionDice = finalResults.filter(d => d.value !== '∞');
                     currentAnswer = total;
                     questionCount++;
@@ -477,7 +471,6 @@
                         messageArea.style.color = 'var(--correct-color)';
                         messageArea.textContent = 'せいかい！';
                     } else {
-                        // ★★★ 不正解の処理 ★★★
                         if (soundsReady) errorSound.triggerAttackRelease("C3", "0.5");
                         messageArea.style.color = 'var(--error-color)';
                         messageArea.textContent = 'ざんねん... 😞';
@@ -594,7 +587,6 @@
                     ctx.fillText(value, x, y);
                 };
                 
-                // ★★★ 結果表示の関数を更新 ★★★
                 const showResult = () => {
                     showScreen('result-screen');
                     const levelName = LEVELS[currentLevelKey].name;
@@ -603,7 +595,7 @@
 
                     const reviewArea = document.getElementById('review-area');
                     const wrongAnswersList = document.getElementById('wrong-answers-list');
-                    wrongAnswersList.innerHTML = ''; // 前回の結果をクリア
+                    wrongAnswersList.innerHTML = '';
 
                     if (wrongAnswers.length > 0) {
                         reviewArea.style.display = 'block';
