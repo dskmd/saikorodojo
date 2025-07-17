@@ -26,6 +26,7 @@
         }
 
         #dice-dojo-app {
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             margin: 10px auto;
             width: 100%;
             max-width: 480px;
@@ -39,6 +40,7 @@
         }
 
         .screen {
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             padding: 15px;
             box-sizing: border-box;
         }
@@ -49,14 +51,15 @@
 
         #menu-screen h1 {
             font-size: 2em;
+            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             margin-bottom: 15px;
         }
 
         .level-button {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-bottom: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.1em;
             font-weight: 700;
             color: var(--accent-color);
@@ -72,11 +75,10 @@
             color: white;
         }
         
-        /* ★★★ 有料会員向けボタンのスタイル ★★★ */
         .level-button.locked {
             color: var(--disabled-color);
             border-color: var(--disabled-color);
-            cursor: pointer; /* 誘導のためポインターは残す */
+            cursor: pointer;
         }
         .level-button.locked:hover {
             background-color: #f8f9fa;
@@ -91,7 +93,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.2em;
             font-weight: 700;
         }
@@ -114,7 +116,7 @@
 
         #dice-canvas {
             width: 100%;
-            height: 160px;
+            height: 160px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             background-color: #f9f9f9;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -130,7 +132,7 @@
         }
 
         #input-area {
-            margin-top: 10px;
+            margin-top: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
         }
 
         #answer-display {
@@ -138,7 +140,7 @@
             height: 50px;
             border: 2px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 2em;
             text-align: center;
             line-height: 50px;
@@ -148,11 +150,11 @@
         #keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
         }
 
         .keypad-button {
-            padding: 10px;
+            padding: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.5em;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -167,8 +169,8 @@
 
         #submit-button {
             grid-column: span 3;
-            margin-top: 8px;
-            padding: 12px;
+            margin-top: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            padding: 12px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             font-size: 1.2em;
             font-weight: 700;
             color: white;
@@ -232,7 +234,6 @@
             <h1>暗算トレーニング💪</h1>
             <button class="level-button" data-level="5kyu">暗算５級 (たし算)</button>
             <button class="level-button" data-level="4kyu1">暗算４級その１ (かけ算)</button>
-            <!-- ★★★ 有料会員向けボタン ★★★ -->
             <button class="level-button locked" data-level="locked"><span class="lock-icon">🔒</span>暗算４級その２ (会員限定)</button>
             <button class="level-button locked" data-level="locked"><span class="lock-icon">🔒</span>暗算３級その１ (会員限定)</button>
             <button class="level-button locked" data-level="locked"><span class="lock-icon">🔒</span>暗算３級その２ (会員限定)</button>
@@ -291,7 +292,6 @@
 
                 if (typeof Tone === 'undefined') { return; }
 
-                // ★★★ 無料版でプレイできるレベルを制限 ★★★
                 const LEVELS = {
                     '5kyu':  { name: '暗算５級 (たし算)', type: 'add', dices: [
                         { sides: 12, color: 'red' }, { sides: 12, color: 'yellow' }, { sides: 12, color: 'green' },
@@ -646,7 +646,6 @@
                     button.addEventListener('click', (e) => {
                         const level = e.currentTarget.dataset.level;
                         if (level === 'locked') {
-                            // ★★★ 会員登録ページへのURLを設定してください ★★★
                             window.open('http://howhowvideo.jp/membership-join/', '_blank');
                             return;
                         }
