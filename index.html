@@ -25,7 +25,6 @@
         }
 
         #dice-dojo-app {
-            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             margin: 10px auto;
             width: 100%;
             max-width: 480px;
@@ -39,7 +38,6 @@
         }
 
         .screen {
-            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             padding: 15px;
             box-sizing: border-box;
         }
@@ -50,15 +48,14 @@
 
         #menu-screen h1 {
             font-size: 2em;
-            /* ★★★ 変更点: 縦の余白を調整 ★★★ */
             margin-bottom: 15px;
         }
 
         .level-button {
             display: block;
             width: 100%;
-            padding: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
-            margin-bottom: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            padding: 10px;
+            margin-bottom: 8px;
             font-size: 1.1em;
             font-weight: 700;
             color: var(--accent-color);
@@ -78,7 +75,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-bottom: 10px;
             font-size: 1.2em;
             font-weight: 700;
         }
@@ -101,7 +98,7 @@
 
         #dice-canvas {
             width: 100%;
-            height: 160px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            height: 160px;
             background-color: #f9f9f9;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -117,7 +114,7 @@
         }
 
         #input-area {
-            margin-top: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-top: 10px;
         }
 
         #answer-display {
@@ -125,7 +122,7 @@
             height: 50px;
             border: 2px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-bottom: 10px;
             font-size: 2em;
             text-align: center;
             line-height: 50px;
@@ -135,11 +132,11 @@
         #keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            gap: 8px;
         }
 
         .keypad-button {
-            padding: 10px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            padding: 10px;
             font-size: 1.5em;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -154,8 +151,8 @@
 
         #submit-button {
             grid-column: span 3;
-            margin-top: 8px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
-            padding: 12px; /* ★★★ 変更点: 縦の余白を調整 ★★★ */
+            margin-top: 8px;
+            padding: 12px;
             font-size: 1.2em;
             font-weight: 700;
             color: white;
@@ -312,7 +309,6 @@
                 let currentQuestionDice = [];
 
                 let soundsReady = false;
-                // ★★★ 変更点: 音が残らないように、全ての音をSynthに変更 ★★★
                 const hitSound = new Tone.PolySynth(Tone.Synth, {
                     oscillator: { type: 'sine' },
                     envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
@@ -417,7 +413,6 @@
                         vx: Math.random() * 10 - 5, vy: Math.random() * 10 - 5,
                         rotation: 0, vr: Math.random() * 0.2 - 0.1,
                     }));
-                    // ★★★ 変更点: 音が残らないように、triggerAttackReleaseに変更 ★★★
                     if (soundsReady) {
                         const now = Tone.now();
                         const notes = ["C4", "E4", "G4", "A4", "C5", "E5"];
@@ -475,7 +470,6 @@
                         messageArea.style.color = 'var(--correct-color)';
                         messageArea.textContent = 'せいかい！';
                     } else {
-                        // ★★★ 変更点: 不正解の効果音をトリガー ★★★
                         if (soundsReady) {
                             errorSound.triggerAttackRelease("A2", "8n");
                         }
@@ -519,11 +513,15 @@
                     const parentWidth = canvas.parentElement.clientWidth;
                     canvas.width = parentWidth;
                     canvas.height = 160;
+                    if (gameState === 'waiting_for_roll') {
+                        drawInitialCanvas();
+                    }
                 };
                 const drawInitialCanvas = () => {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = '#888';
-                    ctx.font = 'bold 24px Noto Sans JP';
+                    const fontSize = Math.min(canvas.width / 15, 24);
+                    ctx.font = `bold ${fontSize}px "Noto Sans JP"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText('タップしてサイコロを振る', canvas.width / 2, canvas.height / 2);
