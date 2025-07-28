@@ -106,11 +106,15 @@
         }
         
         #message-area {
-            height: 30px;
+            height: 40px; /* ★★★ 変更点: 高さを調整 ★★★ */
             margin-top: 10px;
-            font-size: 1.2em;
+            font-size: 1.1em; /* ★★★ 変更点: 文字サイズを調整 ★★★ */
             font-weight: bold;
             color: var(--correct-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
         }
 
         #input-area {
@@ -474,7 +478,8 @@
                             errorSound.triggerAttackRelease("A2", "8n");
                         }
                         messageArea.style.color = 'var(--error-color)';
-                        messageArea.textContent = 'ざんねん... 😞';
+                        // ★★★ 変更点: 不正解時に答えを表示 ★★★
+                        messageArea.textContent = `ざんねん... 😞 正解は ${currentAnswer} です`;
                         wrongAnswers.push({
                             dices: currentQuestionDice,
                             correct: currentAnswer,
