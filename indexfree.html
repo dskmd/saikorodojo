@@ -121,11 +121,15 @@
         }
         
         #message-area {
-            height: 30px;
+            height: 40px;
             margin-top: 10px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
             color: var(--correct-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
         }
 
         #input-area {
@@ -480,7 +484,7 @@
                             errorSound.triggerAttackRelease("A2", "8n");
                         }
                         messageArea.style.color = 'var(--error-color)';
-                        messageArea.textContent = 'ざんねん... �';
+                        messageArea.textContent = `ざんねん... 😞 正解は ${currentAnswer} です`;
                         wrongAnswers.push({
                             dices: currentQuestionDice,
                             correct: currentAnswer,
@@ -647,7 +651,7 @@
                     button.addEventListener('click', (e) => {
                         const level = e.currentTarget.dataset.level;
                         if (level === 'locked') {
-                            window.open('https://howhowvideo.jp/register/basic-plan/', '_blank');
+                            window.open('http://howhowvideo.jp/membership-join/', '_blank');
                             return;
                         }
                         initAudio();
